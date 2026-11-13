@@ -8,6 +8,7 @@ import { distance } from './geo.js';
 import { drawStamp } from './stamp.js';
 import { createPhoto, events, listPhotos, processPending } from './photos.js';
 import { initGallery } from './gallery.js';
+import { initInstall } from './install.js';
 import { $, toast } from './util.js';
 
 document.title = APP_NAME;
@@ -328,6 +329,7 @@ document.addEventListener('visibilitychange', () => {
 window.addEventListener('online', processPending);
 
 initGallery();
+initInstall();
 renderTag();
 renderGps();
 refreshLastThumb();

@@ -52,6 +52,7 @@ js/exif.js              grava coordenadas/data dentro do JPEG
 js/photos.js            salvar, refazer carimbo, exportar
 js/db.js                banco de fotos do app (IndexedDB)
 js/gallery.js           galeria, visualização e edição
+js/install.js           aviso "Instale o app no celular"
 sw.js                   funcionamento offline
 manifest.webmanifest    dados de instalação (nome, ícones)
 tools/gerar-icones.mjs  gera os ícones PNG (node tools/gerar-icones.mjs)
@@ -73,9 +74,12 @@ A câmera e o GPS do navegador **só funcionam em endereço seguro (https)**. O 
 
 1. Abra o link no celular — **Chrome** no Android, **Safari** no iPhone.
 2. Permita **câmera** e **localização** quando o navegador perguntar.
-3. Instale na tela inicial:
-   - Android: menu ⋮ → **Instalar app** (ou "Adicionar à tela inicial").
-   - iPhone: botão Compartilhar → **Adicionar à Tela de Início**.
+3. Instale na tela inicial — o próprio app mostra o aviso **"Instale o app no celular"**:
+   - Android: toque em **Instalar** (se o navegador não permitir, o aviso ensina o caminho pelo menu ⋮).
+   - iPhone: siga o passo a passo do aviso (Compartilhar → **Adicionar à Tela de Início**).
+   - "Agora não" esconde o aviso por 1 dia. Depois de instalado, o aviso não aparece mais.
+
+Depois de instalado, o app vira um ícone na tela do celular: abre direto na câmera, em tela cheia, sem link e sem internet.
 
 ### Publicar uma versão nova
 

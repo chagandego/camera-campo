@@ -194,6 +194,50 @@ button:disabled { opacity: 0.45; cursor: default; }
   .round-btn-spacer { display: none; }
 }
 
+/* ---------- aviso de instalação ---------- */
+.install-card {
+  position: absolute; z-index: 4;
+  top: calc(var(--top) + 56px); left: 12px; right: 12px;
+  max-width: 440px; margin: 0 auto;
+  padding: 16px; border-radius: 18px;
+  background: rgba(22, 22, 25, 0.97); border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+  animation: card-in 0.25s ease-out;
+}
+@keyframes card-in { from { opacity: 0; transform: translateY(-8px); } }
+.install-head { display: flex; gap: 12px; align-items: center; }
+.install-head img { flex: none; border-radius: 11px; }
+.install-head h2 { margin: 0; font-size: 17px; line-height: 1.25; }
+.install-head p { margin: 3px 0 0; font-size: 14px; color: var(--muted); }
+.install-steps {
+  margin: 14px 0 0; padding: 0; list-style: none; counter-reset: step;
+  display: flex; flex-direction: column; gap: 10px; font-size: 15px;
+}
+.install-steps li { counter-increment: step; position: relative; padding-left: 32px; line-height: 1.75; }
+.install-steps li::before {
+  content: counter(step);
+  position: absolute; left: 0; top: 2px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--accent); color: var(--accent-ink);
+  font-size: 13px; font-weight: 700; line-height: 22px; text-align: center;
+}
+.key {
+  display: inline-flex; align-items: center; gap: 4px; vertical-align: middle;
+  max-width: 100%; padding: 0 7px; border-radius: 7px; background: var(--surface-3);
+  font-weight: 600; line-height: 1.6; white-space: nowrap;
+}
+.key .ico { width: 15px; height: 15px; }
+.install-note {
+  margin: 12px 0 0; padding: 9px 11px; border-radius: 10px;
+  background: rgba(251, 191, 36, 0.12); color: var(--warn); font-size: 13.5px;
+}
+.install-actions { display: flex; gap: 10px; margin-top: 14px; }
+.install-actions .btn { flex: 1; min-height: 46px; }
+
+@media (orientation: landscape) and (max-height: 560px) {
+  .install-card { top: 10px; right: 144px; left: 12px; max-height: calc(100% - 20px); overflow-y: auto; }
+}
+
 /* ---------- barras (galeria / foto) ---------- */
 .bar {
   flex: none; display: flex; align-items: center; gap: 6px;

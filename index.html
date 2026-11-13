@@ -32,6 +32,7 @@
     <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
     <symbol id="i-tag" viewBox="0 0 24 24"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.3"/></symbol>
     <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></symbol>
+    <symbol id="i-add" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3.5"/><path d="M12 8v8M8 12h8"/></symbol>
     <symbol id="i-wifi-off" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M8.5 16.4a5 5 0 0 1 7 0"/><path d="M5 12.9a10 10 0 0 1 5.2-2.7M19 12.9a10 10 0 0 0-2.3-1.7"/><circle cx="12" cy="20" r=".6"/></symbol>
   </svg>
 
@@ -60,6 +61,34 @@
         <svg class="ico ico-sm"><use href="#i-wifi-off"/></svg>Sem internet
       </span>
     </header>
+
+    <aside class="install-card" id="install-card" hidden aria-labelledby="install-title">
+      <div class="install-head">
+        <img src="icons/icon-192.png" alt="" width="46" height="46">
+        <div>
+          <h2 id="install-title">Instale o app no celular</h2>
+          <p>Fica um ícone na tela: abre direto na câmera, sem link e sem internet.</p>
+        </div>
+      </div>
+
+      <ol class="install-steps" data-show="ios">
+        <li>Toque em <span class="key"><svg class="ico ico-sm"><use href="#i-share"/></svg>Compartilhar</span> (se não aparecer, toque antes em <span class="key">⋯</span>)</li>
+        <li>Escolha <span class="key"><svg class="ico ico-sm"><use href="#i-add"/></svg>Adicionar à Tela de Início</span></li>
+        <li>Toque em <b>Adicionar</b></li>
+      </ol>
+      <p class="install-note" data-show="ios">Instale antes de tirar as fotos: no iPhone, as fotos feitas pelo navegador não passam para o app instalado.</p>
+
+      <ol class="install-steps" data-show="manual">
+        <li>Toque no menu <span class="key">⋮</span> do navegador (canto de cima)</li>
+        <li>Escolha <span class="key">Instalar app</span> ou <span class="key">Adicionar à tela inicial</span></li>
+      </ol>
+
+      <div class="install-actions">
+        <button class="btn btn-ghost" id="install-later" type="button">Agora não</button>
+        <button class="btn btn-primary" id="install-go" type="button" data-show="android">Instalar</button>
+        <button class="btn btn-primary" id="install-ok" type="button" data-show="ios manual">Entendi</button>
+      </div>
+    </aside>
 
     <section class="cam-bottom">
       <div class="tag-row">

@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Sem nome">
+  <meta name="description" content="Câmera de campo: endereço, CEP, coordenadas, data e hora gravados na foto.">
+  <title>Projeto sem nome</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/app.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <svg class="sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/></symbol>
+    <symbol id="i-images" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="9" cy="9" r="1.8"/><path d="M21 15.5l-5-5L5 21"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3.5v11.5"/><path d="M7 10.5l5 5 5-5"/><path d="M5 20.5h14"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M7.5 7.5L12 3l4.5 4.5"/><path d="M6 12H5v8.5h14V12h-1"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.1-7-11.5a7 7 0 0 1 14 0C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+    <symbol id="i-flash" viewBox="0 0 24 24"><path d="M13 2.5L5 13.5h6.5L10.5 21.5l8-11H12l1-8z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.3"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></symbol>
+    <symbol id="i-wifi-off" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M8.5 16.4a5 5 0 0 1 7 0"/><path d="M5 12.9a10 10 0 0 1 5.2-2.7M19 12.9a10 10 0 0 0-2.3-1.7"/><circle cx="12" cy="20" r=".6"/></symbol>
+  </svg>
+
+  <!-- ============ CÂMERA ============ -->
+  <main class="view view-camera" data-view="camera">
+    <div class="viewfinder" id="viewfinder">
+      <div class="frame" id="frame">
+        <video id="video" playsinline muted autoplay></video>
+        <canvas id="overlay" aria-hidden="true"></canvas>
+        <div class="flash" id="flash"></div>
+      </div>
+      <div class="cam-error" id="cam-error" hidden>
+        <svg class="ico ico-xl"><use href="#i-camera"/></svg>
+        <h2>Não foi possível abrir a câmera</h2>
+        <p id="cam-error-msg"></p>
+        <button class="btn btn-primary" id="btn-retry" type="button">Tentar novamente</button>
+        <button class="btn btn-ghost" id="btn-native" type="button">Usar a câmera do celular</button>
+      </div>
+    </div>
+
+    <header class="cam-top">
+      <button class="pill" id="gps-pill" type="button" data-state="wait">
+        <span class="dot"></span><span id="gps-text">Buscando GPS…</span>
+      </button>
+      <span class="pill pill-plain" id="net-pill" hidden>
+        <svg class="ico ico-sm"><use href="#i-wifi-off"/></svg>Sem internet
+      </span>
+    </header>
+
+    <section class="cam-bottom">
+      <div class="tag-row">
+        <button class="chip" id="btn-tag" type="button">
+          <svg class="ico ico-sm"><use href="#i-tag"/></svg><span id="tag-text">Identificação</span>
+        </button>
+        <button class="chip chip-inc" id="btn-tag-inc" type="button" hidden aria-label="Próximo número">+1</button>
+      </div>
+      <div class="controls">
+        <button class="gallery-btn" id="btn-gallery" type="button" aria-label="Abrir galeria">
+          <img id="last-thumb" alt="" hidden>
+          <svg class="ico" id="gallery-ico"><use href="#i-images"/></svg>
+          <span class="spinner" id="processing" hidden></span>
+          <span class="badge" id="gallery-count" hidden></span>
+        </button>
+        <button class="shutter" id="btn-shutter" type="button" aria-label="Tirar foto"><span></span></button>
+        <button class="round-btn" id="btn-torch" type="button" aria-label="Lanterna" aria-pressed="false" hidden>
+          <svg class="ico"><use href="#i-flash"/></svg>
+        </button>
+        <span class="round-btn-spacer" id="torch-spacer"></span>
+      </div>
+    </section>
+    <input type="file" id="file-input" accept="image/*" capture="environment" hidden>
+  </main>
+
+  <!-- ============ GALERIA ============ -->
+  <section class="view view-gallery" data-view="gallery" hidden>
+    <header class="bar">
+      <button class="icon-btn" type="button" data-back aria-label="Voltar para a câmera"><svg class="ico"><use href="#i-back"/></svg></button>
+      <div class="bar-title">
+        <h1 id="gallery-title">Galeria</h1>
+        <p id="gallery-sub"></p>
+      </div>
+      <button class="text-btn" id="btn-select" type="button">Selecionar</button>
+    </header>
+    <div class="gallery-scroll" id="gallery-scroll">
+      <div id="grid"></div>
+      <div class="empty" id="gallery-empty" hidden>
+        <svg class="ico ico-xl"><use href="#i-images"/></svg>
+        <h2>Nenhuma foto ainda</h2>
+        <p>As fotos tiradas no app aparecem aqui. Depois é só salvar no celular ou compartilhar.</p>
+        <button class="btn btn-primary" type="button" data-back>Abrir câmera</button>
+      </div>
+    </div>
+    <footer class="action-bar" id="select-bar" hidden>
+      <button class="action" id="sel-all" type="button"><svg class="ico"><use href="#i-check"/></svg><span>Todas</span></button>
+      <button class="action" id="sel-save" type="button"><svg class="ico"><use href="#i-download"/></svg><span>Salvar</span></button>
+      <button class="action" id="sel-share" type="button"><svg class="ico"><use href="#i-share"/></svg><span>Enviar</span></button>
+      <button class="action danger" id="sel-delete" type="button"><svg class="ico"><use href="#i-trash"/></svg><span>Excluir</span></button>
+    </footer>
+  </section>
+
+  <!-- ============ VISUALIZAR FOTO ============ -->
+  <section class="view view-viewer" data-view="viewer" hidden>
+    <header class="bar">
+      <button class="icon-btn" type="button" data-back aria-label="Voltar para a galeria"><svg class="ico"><use href="#i-back"/></svg></button>
+      <div class="bar-title">
+        <h1 id="viewer-title">Foto</h1>
+        <p id="viewer-sub"></p>
+      </div>
+      <a class="icon-btn" id="viewer-map" target="_blank" rel="noopener" aria-label="Ver no mapa"><svg class="ico"><use href="#i-pin"/></svg></a>
+    </header>
+    <div class="viewer-stage" id="viewer-stage">
+      <img id="viewer-img" alt="">
+    </div>
+    <footer class="action-bar">
+      <button class="action" id="v-save" type="button"><svg class="ico"><use href="#i-download"/></svg><span>Salvar</span></button>
+      <button class="action" id="v-share" type="button"><svg class="ico"><use href="#i-share"/></svg><span>Enviar</span></button>
+      <button class="action" id="v-edit" type="button"><svg class="ico"><use href="#i-edit"/></svg><span>Editar</span></button>
+      <button class="action danger" id="v-delete" type="button"><svg class="ico"><use href="#i-trash"/></svg><span>Excluir</span></button>
+    </footer>
+  </section>
+
+  <!-- ============ IDENTIFICAÇÃO ============ -->
+  <dialog class="sheet" id="tag-dialog">
+    <form method="dialog">
+      <h2>Identificação da foto</h2>
+      <p class="hint">Aparece em destaque no carimbo e no nome do arquivo. Ex.: PV-01, Caixa 3, Estaca 12.</p>
+      <input id="tag-input" maxlength="40" autocomplete="off" autocapitalize="characters" enterkeyhint="done" placeholder="Ex.: PV-01">
+      <div class="sheet-actions">
+        <button class="btn btn-ghost" id="tag-clear" type="button">Sem identificação</button>
+        <button class="btn btn-primary" value="ok">OK</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ============ EDITAR ============ -->
+  <dialog class="sheet" id="edit-dialog">
+    <form method="dialog" id="edit-form">
+      <h2>Editar informações</h2>
+      <p class="hint" id="edit-coords"></p>
+      <label class="field"><span>Identificação</span><input name="tag" maxlength="40" autocomplete="off" autocapitalize="characters"></label>
+      <div class="row">
+        <label class="field grow"><span>Logradouro</span><input name="logradouro" autocomplete="off"></label>
+        <label class="field w-num"><span>Número</span><input name="numero" autocomplete="off"></label>
+      </div>
+      <label class="field"><span>Bairro</span><input name="bairro" autocomplete="off"></label>
+      <div class="row">
+        <label class="field grow"><span>Cidade</span><input name="cidade" autocomplete="off"></label>
+        <label class="field w-uf"><span>UF</span><input name="uf" maxlength="2" autocomplete="off" autocapitalize="characters"></label>
+      </div>
+      <label class="field"><span>CEP</span><input name="cep" inputmode="numeric" maxlength="9" autocomplete="off" placeholder="00000-000"></label>
+      <button class="btn btn-ghost btn-block" id="btn-regeo" type="button">
+        <svg class="ico ico-sm"><use href="#i-refresh"/></svg>Buscar endereço pelo GPS da foto
+      </button>
+      <p class="hint small">Coordenadas, data e hora não podem ser alteradas.</p>
+      <div class="sheet-actions">
+        <button class="btn btn-ghost" id="edit-cancel" type="button">Cancelar</button>
+        <button class="btn btn-primary" value="save">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

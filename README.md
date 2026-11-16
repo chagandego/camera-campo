@@ -113,6 +113,8 @@ Instala-se **uma vez só**. Quando sai uma versão nova, o próprio app baixa tu
 
 Não precisa abrir o link nem adicionar à tela de início de novo. Fotos e layouts continuam no app.
 
+Para conferir em qual versão um celular está: **fim da galeria** ("Apoio Varredura · versão 5").
+
 ### Publicar uma versão nova
 
 1. Troque `VERSION` em `sw.js` (ex.: `v4` → `v5`). **Obrigatório:** é isso que faz os celulares receberem a atualização — sem trocar, eles continuam na versão antiga.

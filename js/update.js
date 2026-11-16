@@ -3,6 +3,7 @@
 // Ao tocar em "Atualizar", o app recarrega já na versão nova (fotos e layouts continuam no app).
 // Se a pessoa tocar em "Depois", a versão nova entra sozinha na próxima vez que o app for aberto do zero.
 
+import { APP_NAME } from './config.js';
 import { $, sleep, toast } from './util.js';
 
 const CHECK_MS = 5 * 60 * 1000; // procura versão nova ao voltar para o app (no máximo a cada 5 min)
@@ -73,10 +74,36 @@ async function applyUpdate() {
   setTimeout(reload, 4000); // garantia, caso o aviso de troca não chegue
 }
 
-function afterUpdate() {
+/** Pergunta ao service worker em uso qual é a versão do app (ex.: 'v5'). */
+function askVersion(worker) {
+  return new Promise((resolve) => {
+    if (!worker) return resolve(null);
+    const ch = new MessageChannel();
+    const timer = setTimeout(() => resolve(null), 2000); // versões antigas não respondem
+    ch.port1.onmessage = (e) => { clearTimeout(timer); resolve(typeof e.data === 'string' ? e.data : null); };
+    try { worker.postMessage({ type: 'GET_VERSION' }, [ch.port2]); } catch { clearTimeout(timer); resolve(null); }
+  });
+}
+
+const versionLabel = (v) => `versão ${String(v).replace(/^v/i, '')}`;
+
+/** Mostra a versão no fim da galeria (para conferir se o celular já atualizou). */
+async function showVersion() {
+  const v = await askVersion(navigator.serviceWorker.controller);
+  const el = document.getElementById('app-version');
+  if (v && el) {
+    el.textContent = `${APP_NAME} · ${versionLabel(v)}`;
+    el.hidden = false;
+  }
+  return v;
+}
+
+function afterUpdate(version) {
   let flag = null;
   try { flag = sessionStorage.getItem(FLAG); sessionStorage.removeItem(FLAG); } catch { /* ignore */ }
-  if (flag && !waitingWorker()) toast('App atualizado ✓', 3000);
+  if (flag && !waitingWorker()) {
+    toast(version ? `App atualizado para a ${versionLabel(version)} ✓` : 'App atualizado ✓', 3500);
+  }
 }
 
 export function initUpdate() {
@@ -86,16 +113,19 @@ export function initUpdate() {
   $('#update-go')?.addEventListener('click', applyUpdate);
 
   // Só recarrega quando foi a pessoa que pediu (na primeira instalação também há troca, e aí não recarrega).
-  navigator.serviceWorker.addEventListener('controllerchange', () => { if (updating) reload(); });
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (updating) reload();
+    else showVersion(); // primeira instalação: o app acabou de passar a funcionar offline
+  });
 
   const start = () => navigator.serviceWorker.register('sw.js')
-    .then((r) => {
+    .then(async (r) => {
       reg = r;
       lastCheck = Date.now(); // abrir o app já faz o navegador procurar versão nova
       watch(r.installing);
       r.addEventListener('updatefound', () => watch(r.installing));
-      afterUpdate();
       maybeShow();
+      afterUpdate(await showVersion());
     })
     .catch(() => {});
   if (document.readyState === 'complete') start();

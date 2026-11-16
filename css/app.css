@@ -44,10 +44,11 @@ button:disabled { opacity: 0.45; cursor: default; }
 .ico-sm { width: 18px; height: 18px; }
 .ico-xl { width: 52px; height: 52px; stroke-width: 1.4; color: var(--muted); }
 
+/* Cada tela ocupa exatamente a área visível (inset: 0), em qualquer celular e navegador.
+   Sem altura em vh/dvh: em alguns aparelhos isso passa do tamanho visível e corta o topo e o rodapé. */
 .view {
   position: fixed; inset: 0;
   display: flex; flex-direction: column;
-  height: 100vh; height: 100dvh;
 }
 
 /* ---------- botões genéricos ---------- */
@@ -333,6 +334,7 @@ button:disabled { opacity: 0.45; cursor: default; }
   padding: 18vh 32px 32px; text-align: center;
 }
 .empty h2 { margin: 6px 0 0; font-size: 19px; }
+.app-version { margin: 22px 16px 4px; text-align: center; font-size: 12.5px; color: var(--muted); }
 .empty p { margin: 0 0 10px; max-width: 34ch; color: var(--muted); }
 
 /* ---------- visualizar foto ---------- */
@@ -345,7 +347,7 @@ button:disabled { opacity: 0.45; cursor: default; }
 
 /* ---------- folhas (diálogos) ---------- */
 dialog.sheet {
-  width: 100%; max-width: 520px; max-height: 92dvh; margin: auto auto 0;
+  width: 100%; max-width: 520px; max-height: calc(100% - 24px); margin: auto auto 0;
   padding: 0; border: 0; border-radius: 20px 20px 0 0;
   background: var(--surface-2); color: var(--text);
 }

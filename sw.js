@@ -4,7 +4,7 @@
 // em segundo plano e o app mostra o aviso "Nova atualização" (js/update.js).
 // Sem trocar VERSION, os celulares continuam na versão antiga.
 
-const VERSION = 'v4';
+const VERSION = 'v5';
 const CACHE = `app-campo-${VERSION}`;
 const ASSETS = [
   './',
@@ -42,6 +42,7 @@ self.addEventListener('install', (e) => {
 
 self.addEventListener('message', (e) => {
   if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
+  if (e.data && e.data.type === 'GET_VERSION' && e.ports[0]) e.ports[0].postMessage(VERSION);
 });
 
 self.addEventListener('activate', (e) => {

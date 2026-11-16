@@ -1,6 +1,6 @@
-// Configurações gerais do app. O nome ainda não foi escolhido:
-// quando decidir, troque aqui, no manifest.webmanifest e no <title> do index.html.
-export const APP_NAME = 'Projeto sem nome';
+// Configurações gerais do app.
+// Para trocar o nome: aqui, no manifest.webmanifest e no <title>/apple-mobile-web-app-title do index.html.
+export const APP_NAME = 'Apoio Varredura';
 
 export const CAMERA = {
   // Resolução pedida à câmera (o aparelho entrega a mais próxima que suportar).

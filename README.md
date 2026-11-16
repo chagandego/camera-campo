@@ -1,8 +1,8 @@
-# Projeto sem nome — câmera de campo
+# Apoio Varredura — câmera de campo e layout de PV
 
 **Abrir no celular:** https://chagandego.github.io/camera-campo/
 
-App de celular para a equipe de obra. Abre direto na câmera e cada foto sai com um carimbo embaixo:
+App de celular para a equipe de campo. Abre direto na câmera e cada foto sai com um carimbo embaixo:
 
 ```
 PV-12                                          ← identificação (opcional)
@@ -13,7 +13,28 @@ UTM 23S   E 333287.12   N 7394586.09   SIRGAS 2000
 13/11/2026   14:06:04                          ← data e hora
 ```
 
-As fotos ficam numa **galeria dentro do app**. De lá dá para salvar na galeria do celular, mandar (WhatsApp, e-mail…), editar ou excluir.
+As fotos ficam numa **galeria dentro do app**. De lá dá para salvar na galeria do celular, mandar (WhatsApp, e-mail…), editar, excluir e montar o **layout do PV** de cada foto.
+
+## Layout do PV
+
+Galeria → abre a foto → **Layout**. A tela tem o desenho do PV, que atualiza enquanto você preenche:
+
+| Campo | Como funciona |
+|---|---|
+| Nº do PV | Ex.: PVE-001. É o mesmo número do carimbo da foto (mudou aqui, muda na foto também). |
+| Cotas | Cota do tampão (CT) e cota do fundo (CF). A **profundidade é calculada sozinha** (CT − CF). Sem as cotas, dá para digitar a profundidade medida na trena. Aceita vírgula ou ponto. |
+| O tampão foi | Aberto com dificuldade / Aberto facilmente / Não foi possível abrir — toca no quadradinho e marca o X (uma opção). |
+| O PV está | Limpo / Entupido / Assoreado / Com água — pode marcar mais de um ("Limpo" desmarca Entupido e Assoreado). |
+| Tubos | Para cada tubo: **fluxo** (chegada ou saída), **diâmetro** (100 a 600 ou outro), **posição** vista de cima (esquerda, direita, frente, atrás) e **profundidade** — vazio = chega no fundo; preenchido = chega mais alto. Atalhos: "Sem tubos", "1 chegada + 1 saída", "2 chegadas + 1 saída", "3 chegadas + 1 saída". |
+| Observações | Texto livre. |
+
+**Desenho** (igual ao padrão do escritório):
+- **Corte – vista de frente:** tubos da esquerda e da direita aparecem saindo pela parede; tubos da frente/de trás aparecem como **bolinha** com o diâmetro (de trás = tracejada). Tubo que chega mais alto ganha a cota dele (ex.: 1.58 e 1.76).
+- **Planta – vista de cima:** câmara, tampão, linhas de centro e cada tubo com **seta do fluxo** (seta para dentro = chegada, para fora = saída).
+
+**Ver layout pronto · salvar** gera a folha (A4 em pé, JPEG): cabeçalho com Nº do PV, data, endereço e coordenadas; informações gerais com os X; cotas e profundidade; corte e planta; tabela de tubos; observações; e a foto. Arquivo: `LAYOUT_20261116_183303_PVE-001.jpg`.
+
+Tudo é salvo sozinho enquanto você preenche. Na galeria, as fotos com layout ganham um ícone amarelo, e **Salvar/Enviar a foto já leva o layout junto**.
 
 ## Como funciona
 
@@ -52,6 +73,8 @@ js/exif.js              grava coordenadas/data dentro do JPEG
 js/photos.js            salvar, refazer carimbo, exportar
 js/db.js                banco de fotos do app (IndexedDB)
 js/gallery.js           galeria, visualização e edição
+js/layout.js            tela "Layout do PV" (dados, tubos, salvamento automático)
+js/ficha.js             desenho do corte e da planta + folha do layout
 js/install.js           aviso "Instale o app no celular"
 sw.js                   funcionamento offline
 manifest.webmanifest    dados de instalação (nome, ícones)
@@ -94,9 +117,13 @@ git push
 
 O GitHub Pages atualiza o link em cerca de 1 minuto. No celular, o app pega a versão nova na segunda vez que for aberto.
 
-## Trocar o nome
+## Nome do app
 
-Quando o nome for escolhido, altere em três lugares: `js/config.js` (`APP_NAME`), `manifest.webmanifest` (`name` e `short_name`) e `index.html` (`<title>` e `apple-mobile-web-app-title`).
+O nome é **Apoio Varredura**. Para trocar: `js/config.js` (`APP_NAME`), `manifest.webmanifest` (`name` e `short_name`) e `index.html` (`<title>`, `application-name` e `apple-mobile-web-app-title`).
+
+Quem instalou antes da troca do nome:
+- **Android:** o nome embaixo do ícone se atualiza sozinho (pode levar alguns dias).
+- **iPhone:** o nome só muda removendo o ícone e instalando de novo. Atenção: remover o app do iPhone pode apagar as fotos guardadas nele — **salve as fotos no celular antes**.
 
 ## Pontos de atenção
 

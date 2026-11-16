@@ -2,7 +2,7 @@
 // Estratégia: responde com o que está em cache e atualiza o cache em segundo plano.
 // Ao publicar uma versão nova, troque o número em VERSION.
 
-const VERSION = 'v2';
+const VERSION = 'v3';
 const CACHE = `app-campo-${VERSION}`;
 const ASSETS = [
   './',
@@ -14,8 +14,10 @@ const ASSETS = [
   './js/config.js',
   './js/db.js',
   './js/exif.js',
+  './js/ficha.js',
   './js/gallery.js',
   './js/install.js',
+  './js/layout.js',
   './js/geo.js',
   './js/geocode.js',
   './js/location.js',

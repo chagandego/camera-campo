@@ -6,6 +6,7 @@ import { toUTM } from './geo.js';
 import {
   events, listPhotos, removePhotos, restamp, saveToDevice, shareFiles, canShareFiles,
 } from './photos.js';
+import { openLayout } from './layout.js';
 import { $, fmtBytes, fmtDate, fmtDayLabel, fmtTime, isIOS, toast } from './util.js';
 
 let photos = [];
@@ -62,6 +63,7 @@ function renderGrid() {
         <img src="${thumbUrl(p)}" alt="" loading="lazy" decoding="async">
         ${p.tag ? `<span class="cell-tag">${esc(p.tag)}</span>` : ''}
         <span class="marks">
+          ${p.ficha ? `<span class="mark layout" title="Tem layout do PV">${svg('i-layout')}</span>` : ''}
           ${p.addrStatus === 'pending' ? `<span class="mark pending" title="Endereço pendente">${svg('i-clock')}</span>` : ''}
           ${p.savedAt ? `<span class="mark saved" title="Já salva no celular">${svg('i-check')}</span>` : ''}
         </span>
@@ -147,15 +149,17 @@ $('#sel-delete').addEventListener('click', () => doDelete(selectedRecs(), () => 
 async function doSave(recs, after) {
   if (!recs.length) return;
   try {
-    const r = await saveToDevice(recs);
-    if (r === 'downloaded') {
-      toast(recs.length > 1
-        ? `${recs.length} fotos baixadas — estão na galeria do celular (pasta Download).`
-        : 'Foto baixada — está na galeria do celular (pasta Download).', 4000);
-    } else if (r === 'shared') {
+    const r = await saveToDevice(recs); // foto + layout (quando a foto tiver layout)
+    if (r.result === 'downloaded') {
+      const what = [
+        r.photos === 1 ? '1 foto' : `${r.photos} fotos`,
+        r.layouts ? (r.layouts === 1 ? '1 layout' : `${r.layouts} layouts`) : '',
+      ].filter(Boolean).join(' e ');
+      toast(`Baixado: ${what} — na galeria do celular (pasta Download).`, 4000);
+    } else if (r.result === 'shared') {
       toast('Pronto!');
     }
-    if (r !== 'cancelled') after?.();
+    if (r.result !== 'cancelled') after?.();
   } catch (err) {
     toast(`Não foi possível salvar: ${err.message || err}`, 4000);
   }
@@ -196,6 +200,7 @@ function renderViewer() {
 
   $('#viewer-title').textContent = rec.tag || 'Foto';
   const bits = [`${fmtDate(d)} ${fmtTime(d).slice(0, 5)}`, `${viewerIndex + 1} de ${photos.length}`];
+  if (rec.ficha) bits.push('com layout');
   if (rec.savedAt) bits.push('salva ✓');
   else if (rec.addrStatus === 'pending') bits.push('endereço pendente');
   $('#viewer-sub').textContent = bits.join(' · ');
@@ -246,6 +251,7 @@ $('#v-save').addEventListener('click', () => doSave([current()]));
 $('#v-share').addEventListener('click', () => doShare([current()]));
 $('#v-delete').addEventListener('click', () => doDelete([current()]));
 $('#v-edit').addEventListener('click', () => openEdit(current()));
+$('#v-layout').addEventListener('click', () => { if (current()) openLayout(current()); });
 
 // ---------- editar ----------
 const editDlg = $('#edit-dialog');
@@ -312,12 +318,14 @@ editDlg.addEventListener('close', async () => {
   };
   delete form.dataset.cepAprox;
   const hasAddress = address.logradouro || address.cidade || address.bairro;
-  rec.tag = v('tag');
-  rec.address = hasAddress ? address : null;
-  rec.addrStatus = hasAddress ? 'manual' : rec.pos ? 'pending' : 'none';
+  const changes = {
+    tag: v('tag'),
+    address: hasAddress ? address : null,
+    addrStatus: hasAddress ? 'manual' : rec.pos ? 'pending' : 'none',
+  };
   toast('Atualizando a foto…', 1500);
   try {
-    await restamp(rec);
+    await restamp(rec, changes);
     toast('Foto atualizada');
   } catch (err) {
     toast(`Erro ao atualizar: ${err.message || err}`, 4000);

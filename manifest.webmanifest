@@ -1,7 +1,7 @@
 {
-  "name": "Projeto sem nome",
-  "short_name": "Sem nome",
-  "description": "Câmera de campo: endereço, CEP, coordenadas, data e hora gravados na foto.",
+  "name": "Apoio Varredura",
+  "short_name": "Apoio Varredura",
+  "description": "Câmera de campo para varredura de PVs: endereço, CEP, coordenadas, data e hora na foto, e layout do PV.",
   "lang": "pt-BR",
   "id": "./",
   "start_url": "./",

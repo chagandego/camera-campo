@@ -31,6 +31,31 @@ async function run(mode, fn) {
 }
 
 export const putPhoto = (rec) => run('readwrite', (s) => { s.put(rec); return rec; });
+
+/**
+ * Lê a versão mais recente da foto e altera só o que `fn` mudar, tudo numa transação.
+ * Evita que uma alteração (ex.: layout) apague outra feita ao mesmo tempo (ex.: endereço).
+ * Retorna o registro atualizado (ou null se a foto não existe mais).
+ */
+export async function patchPhoto(id, fn) {
+  const db = await open();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, 'readwrite');
+    const store = tx.objectStore(STORE);
+    let out = null;
+    const req = store.get(id);
+    req.onsuccess = () => {
+      const rec = req.result;
+      if (!rec) return;
+      fn(rec);
+      store.put(rec);
+      out = rec;
+    };
+    tx.oncomplete = () => resolve(out);
+    tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error || new Error('Operação cancelada'));
+  });
+}
 export const getPhoto = (id) => run('readonly', (s) => s.get(id));
 export const deletePhotos = (ids) => run('readwrite', (s) => { ids.forEach((id) => s.delete(id)); });
 

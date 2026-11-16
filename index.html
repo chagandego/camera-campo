@@ -8,9 +8,10 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Sem nome">
-  <meta name="description" content="Câmera de campo: endereço, CEP, coordenadas, data e hora gravados na foto.">
-  <title>Projeto sem nome</title>
+  <meta name="apple-mobile-web-app-title" content="Apoio Varredura">
+  <meta name="application-name" content="Apoio Varredura">
+  <meta name="description" content="Câmera de campo para varredura de PVs: endereço, CEP, coordenadas, data e hora na foto, e layout do PV.">
+  <title>Apoio Varredura</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/png" href="icons/icon-192.png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -32,6 +33,9 @@
     <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
     <symbol id="i-tag" viewBox="0 0 24 24"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.3"/></symbol>
     <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></symbol>
+    <symbol id="i-layout" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17.5" rx="2"/><path d="M9 3.5h6v3H9z"/><path d="M10 10.5v6.5h4v-6.5"/><path d="M8.5 10.5h7"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
     <symbol id="i-add" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3.5"/><path d="M12 8v8M8 12h8"/></symbol>
     <symbol id="i-wifi-off" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M8.5 16.4a5 5 0 0 1 7 0"/><path d="M5 12.9a10 10 0 0 1 5.2-2.7M19 12.9a10 10 0 0 0-2.3-1.7"/><circle cx="12" cy="20" r=".6"/></symbol>
   </svg>
@@ -157,8 +161,107 @@
     <footer class="action-bar">
       <button class="action" id="v-save" type="button"><svg class="ico"><use href="#i-download"/></svg><span>Salvar</span></button>
       <button class="action" id="v-share" type="button"><svg class="ico"><use href="#i-share"/></svg><span>Enviar</span></button>
+      <button class="action action-accent" id="v-layout" type="button"><svg class="ico"><use href="#i-layout"/></svg><span>Layout</span></button>
       <button class="action" id="v-edit" type="button"><svg class="ico"><use href="#i-edit"/></svg><span>Editar</span></button>
       <button class="action danger" id="v-delete" type="button"><svg class="ico"><use href="#i-trash"/></svg><span>Excluir</span></button>
+    </footer>
+  </section>
+
+  <!-- ============ LAYOUT DO PV ============ -->
+  <section class="view view-layout" data-view="layout" hidden>
+    <header class="bar">
+      <button class="icon-btn" type="button" data-back aria-label="Voltar para a foto"><svg class="ico"><use href="#i-back"/></svg></button>
+      <div class="bar-title">
+        <h1 id="lay-title">Layout do PV</h1>
+        <p id="lay-sub"></p>
+      </div>
+    </header>
+
+    <div class="layout-scroll" id="layout-scroll">
+      <div class="lay-preview">
+        <div class="seg seg-sm" id="lay-view-seg" role="radiogroup" aria-label="Desenho">
+          <button type="button" role="radio" data-v="corte" aria-checked="true">Corte (frente)</button>
+          <button type="button" role="radio" data-v="planta" aria-checked="false">Planta (cima)</button>
+        </div>
+        <canvas id="lay-canvas" aria-label="Desenho do PV"></canvas>
+      </div>
+
+      <form id="lay-form" class="lay-form" autocomplete="off" novalidate>
+        <section class="lay-sec">
+          <h2>Identificação</h2>
+          <label class="field"><span>Nº do PV</span><input name="tag" maxlength="40" autocapitalize="characters" enterkeyhint="next" placeholder="Ex.: PVE-001"></label>
+        </section>
+
+        <section class="lay-sec">
+          <h2>Cotas</h2>
+          <div class="row">
+            <label class="field grow"><span>Cota do tampão (CT)</span><input name="ct" inputmode="decimal" enterkeyhint="next" placeholder="Ex.: 759.572"></label>
+            <label class="field grow"><span>Cota do fundo (CF)</span><input name="cf" inputmode="decimal" enterkeyhint="next" placeholder="Ex.: 757.482"></label>
+          </div>
+          <label class="field"><span>Profundidade (m)</span><input name="prof" inputmode="decimal" enterkeyhint="done"></label>
+          <p class="hint" id="lay-prof-hint"></p>
+        </section>
+
+        <section class="lay-sec">
+          <h2>O tampão foi</h2>
+          <div class="checks" data-group="tampao" role="radiogroup">
+            <button type="button" class="check" role="radio" data-v="dificuldade"><span class="box"><svg class="ico"><use href="#i-x"/></svg></span>Aberto com dificuldade</button>
+            <button type="button" class="check" role="radio" data-v="facil"><span class="box"><svg class="ico"><use href="#i-x"/></svg></span>Aberto facilmente</button>
+            <button type="button" class="check" role="radio" data-v="nao_abriu"><span class="box"><svg class="ico"><use href="#i-x"/></svg></span>Não foi possível abrir</button>
+          </div>
+        </section>
+
+        <section class="lay-sec">
+          <h2>O PV está</h2>
+          <div class="checks" data-group="estado">
+            <button type="button" class="check" role="checkbox" data-v="limpo"><span class="box"><svg class="ico"><use href="#i-x"/></svg></span>Limpo</button>
+            <button type="button" class="check" role="checkbox" data-v="entupido"><span class="box"><svg class="ico"><use href="#i-x"/></svg></span>Entupido</button>
+            <button type="button" class="check" role="checkbox" data-v="assoreado"><span class="box"><svg class="ico"><use href="#i-x"/></svg></span>Assoreado</button>
+            <button type="button" class="check" role="checkbox" data-v="agua"><span class="box"><svg class="ico"><use href="#i-x"/></svg></span>Com água</button>
+          </div>
+        </section>
+
+        <section class="lay-sec">
+          <h2>Tubos <span id="lay-tubos-count"></span></h2>
+          <p class="hint">Comece por um modelo e ajuste, ou adicione tubo por tubo.</p>
+          <div class="presets">
+            <button type="button" class="preset" data-preset="fechado">Sem tubos</button>
+            <button type="button" class="preset" data-preset="passagem">1 chegada + 1 saída</button>
+            <button type="button" class="preset" data-preset="duas">2 chegadas + 1 saída</button>
+            <button type="button" class="preset" data-preset="tres">3 chegadas + 1 saída</button>
+          </div>
+          <div id="lay-tubos" class="tubos"></div>
+          <button type="button" class="btn btn-ghost btn-block" id="lay-add"><svg class="ico ico-sm"><use href="#i-plus"/></svg>Adicionar tubo</button>
+        </section>
+
+        <section class="lay-sec">
+          <h2>Observações</h2>
+          <textarea name="obs" rows="3" maxlength="600" placeholder="Ex.: tampão trincado, degrau quebrado…"></textarea>
+        </section>
+      </form>
+    </div>
+
+    <footer class="lay-footer">
+      <button class="btn btn-primary btn-block" id="lay-sheet" type="button"><svg class="ico"><use href="#i-layout"/></svg>Ver layout pronto · salvar</button>
+    </footer>
+  </section>
+
+  <!-- ============ VER LAYOUT (FOLHA) ============ -->
+  <section class="view view-sheet" data-view="sheet" hidden>
+    <header class="bar">
+      <button class="icon-btn" type="button" data-back aria-label="Voltar"><svg class="ico"><use href="#i-back"/></svg></button>
+      <div class="bar-title">
+        <h1 id="sheet-title">Layout</h1>
+        <p>Amplie com dois dedos</p>
+      </div>
+    </header>
+    <div class="sheet-stage" id="sheet-stage">
+      <p class="sheet-loading" id="sheet-loading">Gerando o layout…</p>
+      <img id="sheet-img" alt="Layout do PV" hidden>
+    </div>
+    <footer class="action-bar">
+      <button class="action" id="sheet-save" type="button"><svg class="ico"><use href="#i-download"/></svg><span>Salvar</span></button>
+      <button class="action" id="sheet-share" type="button"><svg class="ico"><use href="#i-share"/></svg><span>Enviar</span></button>
     </footer>
   </section>
 

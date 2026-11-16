@@ -4,7 +4,7 @@
 // em segundo plano e o app mostra o aviso "Nova atualização" (js/update.js).
 // Sem trocar VERSION, os celulares continuam na versão antiga.
 
-const VERSION = 'v5';
+const VERSION = 'v6';
 const CACHE = `app-campo-${VERSION}`;
 const ASSETS = [
   './',
@@ -28,6 +28,7 @@ const ASSETS = [
   './js/stamp.js',
   './js/update.js',
   './js/util.js',
+  './js/zoom.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',

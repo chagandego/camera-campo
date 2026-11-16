@@ -92,7 +92,7 @@ async function showVersion() {
   const v = await askVersion(navigator.serviceWorker.controller);
   const el = document.getElementById('app-version');
   if (v && el) {
-    el.textContent = `${APP_NAME} · ${versionLabel(v)}`;
+    el.textContent = `${APP_NAME} · ${versionLabel(v)} · tela ${innerWidth}×${innerHeight}`;
     el.hidden = false;
   }
   return v;

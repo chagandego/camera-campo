@@ -5,6 +5,7 @@ import * as nav from './nav.js';
 import { drawCorte, drawPlanta, depthOf, parseNum, fmt2, fmt3, emptyFicha, POSICOES, SENTIDOS } from './ficha.js';
 import { saveFicha, restamp, getPhoto, layoutBlob, layoutFileName, downloadFile, canShareFiles } from './photos.js';
 import { $, $$, isIOS, toast } from './util.js';
+import { zoomable } from './zoom.js';
 
 const DIAMETROS = [100, 150, 200, 250, 300, 400, 500, 600];
 const PRESETS = {
@@ -363,6 +364,7 @@ $('#lay-view-seg').addEventListener('click', (e) => {
 // ---------- ver layout pronto / salvar / enviar ----------
 let sheetFile = null;
 let sheetUrl = null;
+zoomable($('#sheet-stage'), $('#sheet-img')); // zoom só no layout, não na tela inteira
 
 $('#lay-sheet').addEventListener('click', async () => {
   if (!rec) return;

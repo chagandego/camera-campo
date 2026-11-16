@@ -77,6 +77,7 @@ js/layout.js            tela "Layout do PV" (dados, tubos, salvamento automátic
 js/ficha.js             desenho do corte e da planta + folha do layout
 js/install.js           aviso "Instale o app no celular"
 js/update.js            aviso "Nova atualização do app"
+js/zoom.js              zoom só na imagem (foto e layout pronto)
 sw.js                   funcionamento offline e atualizações
 manifest.webmanifest    dados de instalação (nome, ícones)
 tools/gerar-icones.mjs  gera os ícones PNG (node tools/gerar-icones.mjs)

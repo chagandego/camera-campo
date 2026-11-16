@@ -341,7 +341,7 @@ button:disabled { opacity: 0.45; cursor: default; }
 .view-viewer { background: #000; }
 .viewer-stage {
   flex: 1; min-height: 0; display: grid; place-items: center; overflow: hidden;
-  touch-action: pan-y pinch-zoom;
+  touch-action: none; /* gestos tratados em js/zoom.js: zoom só na imagem */
 }
 .viewer-stage img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; user-select: none; -webkit-touch-callout: default; }
 
@@ -467,11 +467,15 @@ dialog input:focus { outline: none; border-color: var(--accent); }
 
 /* folha pronta */
 .sheet-stage {
-  flex: 1; min-height: 0; overflow: auto; -webkit-overflow-scrolling: touch;
-  background: #2a2a2e; padding: 12px; display: flex; flex-direction: column; align-items: center;
+  flex: 1; min-height: 0; overflow: hidden; touch-action: none; /* zoom só no layout (js/zoom.js) */
+  background: #2a2a2e; padding: 12px; display: grid; place-items: center;
 }
-.sheet-stage img { width: 100%; max-width: 900px; height: auto; background: #fff; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45); }
-.sheet-loading { margin: 30vh 0 0; color: var(--muted); }
+.sheet-stage img {
+  display: block; max-width: 100%; max-height: 100%; background: #fff;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45); user-select: none;
+}
+.sheet-loading { margin: 0; padding: 0 12px; text-align: center; color: var(--muted); }
+.viewer-stage img, .sheet-stage img { transform-origin: center center; will-change: transform; }
 
 /* ---------- aviso ---------- */
 .toast {

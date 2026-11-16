@@ -7,6 +7,7 @@ import {
   events, listPhotos, removePhotos, restamp, saveToDevice, shareFiles, canShareFiles,
 } from './photos.js';
 import { openLayout } from './layout.js';
+import { zoomable } from './zoom.js';
 import { $, fmtBytes, fmtDate, fmtDayLabel, fmtTime, isIOS, toast } from './util.js';
 
 let photos = [];
@@ -227,19 +228,8 @@ function step(delta) {
   renderViewer();
 }
 
-let touch = null;
-const stage = $('#viewer-stage');
-stage.addEventListener('touchstart', (e) => {
-  touch = e.touches.length === 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : null;
-}, { passive: true });
-stage.addEventListener('touchend', (e) => {
-  if (!touch || window.visualViewport?.scale > 1.01) return;
-  const t = e.changedTouches[0];
-  const dx = t.clientX - touch.x;
-  const dy = t.clientY - touch.y;
-  touch = null;
-  if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) step(dx < 0 ? 1 : -1);
-}, { passive: true });
+// Zoom só na foto (dois dedos / toque duplo); sem zoom, deslizar para o lado passa de foto.
+zoomable($('#viewer-stage'), $('#viewer-img'), { onSwipe: step });
 document.addEventListener('keydown', (e) => {
   if (nav.currentView() !== 'viewer' || document.querySelector('dialog[open]')) return;
   if (e.key === 'ArrowRight') step(1);

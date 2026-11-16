@@ -9,6 +9,7 @@ import { drawStamp } from './stamp.js';
 import { createPhoto, events, listPhotos, processPending } from './photos.js';
 import { initGallery } from './gallery.js';
 import { initInstall } from './install.js';
+import { initUpdate } from './update.js';
 import { $, toast } from './util.js';
 
 document.title = APP_NAME;
@@ -337,7 +338,4 @@ loc.startTracking();
 startCamera();
 keepAwake();
 processPending();
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
-}
+initUpdate(); // funcionamento offline + aviso "Nova atualização"

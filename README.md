@@ -76,7 +76,8 @@ js/gallery.js           galeria, visualização e edição
 js/layout.js            tela "Layout do PV" (dados, tubos, salvamento automático)
 js/ficha.js             desenho do corte e da planta + folha do layout
 js/install.js           aviso "Instale o app no celular"
-sw.js                   funcionamento offline
+js/update.js            aviso "Nova atualização do app"
+sw.js                   funcionamento offline e atualizações
 manifest.webmanifest    dados de instalação (nome, ícones)
 tools/gerar-icones.mjs  gera os ícones PNG (node tools/gerar-icones.mjs)
 ```
@@ -104,9 +105,17 @@ A câmera e o GPS do navegador **só funcionam em endereço seguro (https)**. O 
 
 Depois de instalado, o app vira um ícone na tela do celular: abre direto na câmera, em tela cheia, sem link e sem internet.
 
+### Atualizações no celular
+
+Instala-se **uma vez só**. Quando sai uma versão nova, o próprio app baixa tudo em segundo plano e mostra o aviso **"Nova atualização do app"**:
+- **Atualizar** → o app recarrega já na versão nova (leva um instante). O que estiver sendo preenchido no layout é salvo antes. Aparece "App atualizado ✓".
+- **Depois** → o aviso some por 30 minutos. Se o app for fechado por completo, a versão nova entra sozinha na próxima vez que ele for aberto.
+
+Não precisa abrir o link nem adicionar à tela de início de novo. Fotos e layouts continuam no app.
+
 ### Publicar uma versão nova
 
-1. Troque `VERSION` em `sw.js` (ex.: `v1` → `v2`) — é isso que faz os celulares baixarem a atualização.
+1. Troque `VERSION` em `sw.js` (ex.: `v4` → `v5`). **Obrigatório:** é isso que faz os celulares receberem a atualização — sem trocar, eles continuam na versão antiga.
 2. Envie para o GitHub:
 
 ```bash
@@ -115,7 +124,7 @@ git commit -m "Descrição da mudança"
 git push
 ```
 
-O GitHub Pages atualiza o link em cerca de 1 minuto. No celular, o app pega a versão nova na segunda vez que for aberto.
+O GitHub Pages atualiza o link em cerca de 1 minuto. Os celulares procuram versão nova sempre que o app é aberto ou volta para a tela (no máximo a cada 5 minutos).
 
 ## Nome do app
 

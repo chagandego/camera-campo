@@ -305,6 +305,21 @@
     </form>
   </dialog>
 
+  <!-- ============ AVISO DE ATUALIZAÇÃO ============ -->
+  <aside class="update-card" id="update-card" hidden role="dialog" aria-modal="false" aria-labelledby="update-title" aria-describedby="update-text">
+    <div class="update-head">
+      <span class="update-ico"><svg class="ico"><use href="#i-refresh"/></svg></span>
+      <div>
+        <h2 id="update-title">Nova atualização do app</h2>
+        <p id="update-text">Já está baixada. Toque em <b>Atualizar</b>: leva só um instante, e as fotos e os layouts continuam no app.</p>
+      </div>
+    </div>
+    <div class="update-actions">
+      <button class="btn btn-ghost" id="update-later" type="button">Depois</button>
+      <button class="btn btn-primary" id="update-go" type="button">Atualizar</button>
+    </div>
+  </aside>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>

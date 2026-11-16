@@ -68,14 +68,15 @@ function changed() {
 }
 
 // Os dados e o id são copiados na hora: se a pessoa já abriu outro PV, nada se mistura.
+let lastSave = Promise.resolve();
 function save() {
   clearTimeout(saveTimer);
   saveTimer = null;
-  if (!rec || !dirty) return Promise.resolve();
+  if (!rec || !dirty) return lastSave; // nada novo, mas pode haver uma gravação em andamento
   dirty = false;
   const id = rec.id;
   const data = { ...clone(F), updatedAt: Date.now() };
-  return saveFicha(id, data)
+  lastSave = saveFicha(id, data)
     .then((saved) => {
       if (rec?.id !== id) return;
       if (saved) rec = saved;
@@ -85,6 +86,7 @@ function save() {
       if (rec?.id === id) { dirty = true; status('Erro ao salvar'); }
       toast(`Erro ao salvar o layout: ${e.message || e}`, 4000);
     });
+  return lastSave;
 }
 
 // O Nº do PV também vai no carimbo da foto: refaz o carimbo quando a pessoa para de digitar.
@@ -124,6 +126,8 @@ nav.onView((v) => {
   if (active) { active = false; flush(); }
 });
 document.addEventListener('visibilitychange', () => { if (document.hidden && active) flush(); });
+// Antes de o app recarregar na versão nova (js/update.js), grava o que estiver pendente.
+window.addEventListener('app:before-update', (e) => e.detail?.waitUntil?.(flush()));
 
 // ---------- campos ----------
 form.addEventListener('submit', (e) => e.preventDefault());

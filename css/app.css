@@ -238,6 +238,30 @@ button:disabled { opacity: 0.45; cursor: default; }
   .install-card { top: 10px; right: 144px; left: 12px; max-height: calc(100% - 20px); overflow-y: auto; }
 }
 
+/* ---------- aviso de atualização (aparece em qualquer tela) ---------- */
+.update-card {
+  position: fixed; z-index: 40;
+  top: calc(var(--top) + 10px); left: 12px; right: 12px;
+  max-width: 440px; margin: 0 auto;
+  padding: 14px 14px 14px 16px; border-radius: 18px;
+  background: rgba(22, 22, 25, 0.98); border: 1px solid rgba(255, 196, 0, 0.5);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  animation: card-in 0.25s ease-out;
+}
+.update-head { display: flex; gap: 12px; align-items: flex-start; }
+.update-ico {
+  flex: none; display: grid; place-items: center;
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--accent); color: var(--accent-ink);
+}
+.update-ico .ico { stroke-width: 2.2; }
+.update-head h2 { margin: 1px 0 0; font-size: 17px; line-height: 1.25; }
+.update-head p { margin: 4px 0 0; font-size: 14px; line-height: 1.4; color: var(--muted); }
+.update-head b { color: var(--text); }
+.update-actions { display: flex; gap: 10px; margin-top: 12px; }
+.update-actions .btn { flex: 1; min-height: 46px; }
+.has-update .install-card { visibility: hidden; }
+
 /* ---------- barras (galeria / foto) ---------- */
 .bar {
   flex: none; display: flex; align-items: center; gap: 6px;
